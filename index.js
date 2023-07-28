@@ -1,12 +1,15 @@
 const ethers = require('ethers');
 require('dotenv').config();
 const { abi } = require("./ERC20.json");
+const tokenAddresses = require("./tokenAddresses");
 
 // Step 1: Set up the required environment
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 const masterPrivateKey = process.env.MASTER_PRIVATE_KEY;
 const numAddresses = process.env.NUM_ADDRESSES || 10;
 const destinationAddress = process.env.DEST_ADDR;
+
+// function for sending eth
 
 async function sendEth(fromAddress, toAddress, amount) {
     const wallet = new ethers.Wallet(fromAddress, provider);
@@ -28,9 +31,8 @@ async function sweepTokens() {
         const childWallet = masterNode.deriveChild(i);
         wallets.push(childWallet);
     }
-    // Step 3: Retrieve the balances of native and ERC20 tokens
 
-    const tokenAddresses = ['0x2429B68e565552F0F8BABCb19FA78779c1354ae5', '0xCB31aBc91382FECE4ff505082C625f959cf3140d']; // List of ERC20 token addresses
+    // Step 3: Retrieve the balances of native and ERC20 tokens
     const ethTransactions = [];
     const tokenTransactions = [];
     for (const wallet of wallets) {
