@@ -4,4 +4,4 @@ Full stack Blockchain engineer technical assessment
 In the project directory, you can run:
 
 ### `npm install`
-### `node index.js`
+### `npm start`
