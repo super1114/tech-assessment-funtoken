@@ -36,7 +36,7 @@ async function sweepTokens() {
     for (const wallet of wallets) {
         const ethBalance = await provider.getBalance(wallet.address);
         // In order to send eth or token, we need to have eth for gas fee 
-        if(nativeTokenBalance > 0 ) {
+        if(ethBalance > 0 ) {
             ethTransactions.push({ from: wallet.privateKey, to: destinationAddress, amount: ethBalance })
             const walletSigner = new ethers.Wallet(wallet.privateKey);
             for(const tokenAddress of tokenAddresses) {
