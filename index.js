@@ -33,24 +33,22 @@ async function sendEth(fromAddress, toAddress, amount) {
 async function sweepTokens() {
     // Step 2: Generate the addresses from master private key
     const masterNode = ethers.HDNodeWallet.fromExtendedKey(masterPrivateKey);
-    let wallets = [];
-    for(var i=0; i<numAddresses; i++) {
-        const childWallet = masterNode.deriveChild(i);
-        wallets.push(childWallet);
-    }
-
-    // Step 3: Retrieve the balances of native and ERC20 tokens and prepare signed transactions to submit
     const ethTransactions = [];
     const tokenTransactions = [];
-    for (const wallet of wallets) {
-        const ethBalance = await provider.getBalance(wallet.address);
+    
+    for(var i=0; i<numAddresses; i++) {
+        const childWallet = masterNode.deriveChild(i);
+        
+        // Step 3: Retrieve the balances of native and ERC20 tokens and bundle signed transactions to submit
+    
+        const ethBalance = await provider.getBalance(childWallet.address);
         // In order to send eth or token, we need to have eth for gas fee 
         if(ethBalance > 0 ) {
-            ethTransactions.push({ from: wallet.privateKey, to: destinationAddress, amount: ethBalance })
-            const walletSigner = new ethers.Wallet(wallet.privateKey);
+            ethTransactions.push({ from: childWallet.privateKey, to: destinationAddress, amount: ethBalance })
+            const walletSigner = new ethers.Wallet(childWallet.privateKey);
             for(const tokenAddress of tokenAddresses) {
                 const tokenContract = new ethers.Contract(tokenAddress, abi, provider);
-                const tokenBalance = await tokenContract.balanceOf(wallet.address);
+                const tokenBalance = await tokenContract.balanceOf(childWallet.address);
                 if(tokenBalance>0) { 
                     const transferTransaction = await tokenContract.connect(walletSigner).transfer(destinationAddress, tokenBalance);
                     tokenTransactions.push(transferTransaction.wait());
@@ -58,6 +56,7 @@ async function sweepTokens() {
             }
         }
     }
+
     
     // Step 4: Broadcast the signed transaction(s)
     try {
