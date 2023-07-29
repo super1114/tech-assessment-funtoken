@@ -3,7 +3,7 @@ Full stack Blockchain engineer technical assessment
 
 Prerequisites.
 
-install node.js
+ - install node.js
 
 In the project directory, you can run:
 
