@@ -59,7 +59,7 @@ async function sweepTokens() {
         }
     }
     
-    // Step 6: Broadcast the signed transaction(s)
+    // Step 4: Broadcast the signed transaction(s)
     try {
         const promises = ethTransactions.map(({ from, to, amount }) =>
             sendEth(from, to, amount)
